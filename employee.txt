@@ -1,0 +1,23 @@
+{
+  "empID": 1001,
+  "name": "Luxembourg",
+  "permanentEmployee": false,
+  "homeAddress": {
+    "streetName": "Banashankari 1st Stage",
+    "city": "Bangalore",
+    "zipcode": 560101
+  },
+  "phoneNumbers": [
+    828277281,
+    1231231123
+  ],
+  "role": "Manager",
+  "locations": [
+    "San Francisco",
+    "Seattle"
+  ],
+  "attributes": {
+    "age": "28 years",
+    "netSalary": "20000"
+  }
+}
