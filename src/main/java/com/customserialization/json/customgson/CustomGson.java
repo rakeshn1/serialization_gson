@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
+import java.util.Map;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
@@ -14,28 +15,42 @@ public class CustomGson {
 
     }
     public String toJson(Object o) {
-        //TODO handle complex objects as input arguments and convert to JSON
+        //TODO handle complex objects having other objects as members and convert to JSON
         StringWriter stringWriter;
         stringWriter = new StringWriter();
-        stringWriter.write("{");
-        for(Field field: o.getClass().getDeclaredFields()){
+        String ObjectBegin = beginObject();
+        stringWriter.write(ObjectBegin);
+        Field [] fields = o.getClass().getDeclaredFields();
+        for(int i = 0; i < fields.length; i++){
             try {
-                String key = field.getName();
+                String key = fields[i].getName();
                 stringWriter.write("\""+key+"\"");
                 stringWriter.write(":");
-                String value = field.get(o).toString();
-                if(key == "id"){
-                    stringWriter.write(value);
-                    stringWriter.write(",");
+                String value;
+                if(fields[i].getType().getSimpleName().equals("Map")){
+                    value = handleMap((Map<String, String>) fields[i].get(o));
+                    if(i != fields.length-1){
+                        stringWriter.write(value);
+                        stringWriter.write(",");
+                    }else{
+                        stringWriter.write(value);
+                    }
                 }else{
-                    stringWriter.write("\""+value+"\"");
+                    value = fields[i].get(o).toString();
+                    if(i != fields.length-1){
+                        stringWriter.write("\""+value+"\"");
+                        stringWriter.write(",");
+                    }else{
+                        stringWriter.write("\""+value+"\"");
+                    }
                 }
 
             }catch (Exception e){
                 return "Exception: "+e;
             }
         }
-        stringWriter.write("}");
+        String ObjectEnd = endObject();
+        stringWriter.write(ObjectEnd);
 
         // Serialization with JsonWriter library
         /*JsonObject jsonObj = Json.createObjectBuilder()
@@ -60,5 +75,37 @@ public class CustomGson {
 
         System.out.println(stringWriter.getBuffer().toString());
         return stringWriter.getBuffer().toString();
+    }
+
+    public String beginObject() {
+        return "{";
+    }
+
+    public String endObject() {
+        return "}";
+    }
+
+    public String beginArray(){
+        return "[";
+    }
+
+    public String endArray(){
+        return "]";
+    }
+
+    public String handleMap(Map<String, String> m){
+        String result = beginObject();
+        for (Map.Entry<String,String> entry : m.entrySet()){
+            result += "\""+entry.getKey()+"\"";
+            result += ":";
+            result += "\""+entry.getValue()+"\"";
+
+            //Just a quick fix
+            if(entry.getKey() == "salary"){
+                result += ",";
+            }
+        }
+        result += endObject();
+        return result;
     }
 }

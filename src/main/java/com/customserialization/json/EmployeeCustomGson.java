@@ -6,6 +6,8 @@ import com.serialization.json.model.User;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class EmployeeCustomGson {
     public static void main(String[] args) throws IOException {
@@ -28,6 +30,10 @@ public class EmployeeCustomGson {
         User user = new User();
         user.setId(456);
         user.setName("Pathrose");
+        Map<String, String> attrs = new HashMap<String, String>();
+        attrs.put("salary", "20500");
+        attrs.put("age", "29 years");
+        user.setAttributes(attrs);
         return user;
 
     }
